@@ -16,36 +16,73 @@ const Navbar = () => {
     navigate('/login');
   };
 
-  console.log('Current User:', currentUser); // Debugging: log the current user
+  const handleNavigate = (path) => {
+    navigate(path);
+  };
 
   return (
     <div
       style={{
         display: 'flex',
         justifyContent: 'space-between',
-        padding: '10px',
+        alignItems: 'center',
+        padding: '10px 20px',
         backgroundColor: '#f8f9fa',
         borderBottom: '1px solid #ddd',
       }}
     >
-      <div style={{ color: '#333', fontWeight: 'bold' }}>
+      {/* Left Section - Welcome Message */}
+      <div style={{ fontWeight: 'bold', fontSize: '16px' }}>
         {`Welcome, ${username}`}
       </div>
-      <div>
-        <button
-          onClick={handleLogout}
+
+      {/* Right Section - Menu Options */}
+      <ul
+        style={{
+          display: 'flex',
+          listStyle: 'none',
+          margin: 0,
+          padding: 0,
+          gap: '20px',
+        }}
+      >
+        <li
           style={{
-            padding: '5px 10px',
-            backgroundColor: '#007bff',
-            color: '#fff',
-            border: 'none',
-            borderRadius: '5px',
             cursor: 'pointer',
+            padding: '5px 10px',
+            fontSize: '15px',
+            color: '#007bff',
+            textDecoration: 'none',
           }}
+          onClick={() => handleNavigate('/dashboard')}
+        >
+          Dashboard
+        </li>
+        <li
+          style={{
+            cursor: 'pointer',
+            padding: '5px 10px',
+            fontSize: '15px',
+            color: '#007bff',
+            textDecoration: 'none',
+          }}
+          onClick={() => handleNavigate('/profile')}
+        >
+          Profile
+        </li>
+        <li
+          style={{
+            cursor: 'pointer',
+            padding: '5px 10px',
+            fontSize: '15px',
+            color: '#007bff',
+            textDecoration: 'none',
+          }}
+          onClick={handleLogout}
         >
           Logout
-        </button>
-      </div>
+        </li>
+      </ul>
     </div>
   );
 };
