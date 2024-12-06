@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, Typography, Button } from '@mui/material';
 import { Link, useNavigate } from 'react-router-dom';
-import { Person, List, ExitToApp, Visibility } from '@mui/icons-material';
+import { Person, List, ExitToApp, ChevronLeft, ChevronRight } from '@mui/icons-material';
+import bg from '../images/blur-hospital.jpg';
 
 const PatientDashboard = () => {
   const [currentView, setCurrentView] = useState('dashboard');
@@ -50,6 +51,13 @@ const PatientDashboard = () => {
     alert('Appointment successfully booked!');
   };
 
+  const cancelAppointment = (id) => {
+    const updatedAppointments = appointments.filter((appointment) => appointment.id !== id);
+    setAppointments(updatedAppointments);
+    localStorage.setItem('appointments', JSON.stringify(updatedAppointments));
+    alert('Appointment canceled successfully!');
+  };
+
   const renderContent = () => {
     switch (currentView) {
       case 'doctorslist':
@@ -65,8 +73,8 @@ const PatientDashboard = () => {
 
   const renderDashboard = () => (
     <div>
-      <h1>Patient Dashboard</h1>
-      <p>Here you can view and manage your appointments.</p>
+      <h1 style={{ color: '#222' }}>Patient Dashboard</h1>
+      <p style={{ color: '#222' }}>Here you can view and manage your appointments.</p>
       <div style={{ display: 'flex', flexWrap: 'wrap', gap: '20px' }}>
         {appointments.length > 0 ? (
           appointments.map((a) => (
@@ -87,13 +95,13 @@ const PatientDashboard = () => {
                 <Typography variant="body2" color="text.secondary" style={{ marginTop: '10px' }}>
                   Status: {a.status}
                 </Typography>
-                <Button 
-                  variant="contained" 
-                  color="primary" 
+                <Button
+                  variant="contained"
+                  color="secondary"
                   style={{ marginTop: '10px' }}
-                  onClick={() => alert('Appointment details will be updated here.')}
+                  onClick={() => cancelAppointment(a.id)}
                 >
-                  View Details
+                  Cancel Appointment
                 </Button>
               </CardContent>
             </Card>
@@ -125,9 +133,9 @@ const PatientDashboard = () => {
                 <td>{doctor.extraField}</td>
                 <td>{doctor.email}</td>
                 <td>
-                  <Button 
-                    variant="contained" 
-                    color="primary" 
+                  <Button
+                    variant="contained"
+                    color="primary"
                     onClick={() => handleAppointment(doctor)}
                   >
                     Book Appointment
@@ -153,7 +161,7 @@ const PatientDashboard = () => {
         <div
           style={{
             width: '250px',
-            backgroundColor: '#f8f9fa',
+            backgroundColor: '#2C3E50',
             padding: '20px',
             borderRight: '1px solid #ddd',
             display: 'flex',
@@ -161,9 +169,10 @@ const PatientDashboard = () => {
             gap: '20px',
             position: 'fixed',
             height: '100vh',
+            color: 'white',
           }}
         >
-          <div style={{ fontWeight: 'bold', fontSize: '16px', color: '#222' }}>
+          <div style={{ fontWeight: 'bold', fontSize: '16px', color: '#ecf0f1' }}>
             {`Welcome, ${username}`}
           </div>
           <div>
@@ -192,28 +201,44 @@ const PatientDashboard = () => {
         </div>
       )}
 
-      {/* Toggle Button */}
-      <button
+      {/* Fixed Toggle Button */}
+      <div
         onClick={() => setIsSidebarOpen(!isSidebarOpen)}
         style={{
-          position: 'absolute',
-          top: '10px',
+          position: 'fixed',
+          top: '100px',
           left: isSidebarOpen ? '260px' : '10px',
           zIndex: 1,
-          padding: '10px',
           cursor: 'pointer',
+          backgroundColor: '#3498db',
+          padding: '10px',
+          borderRadius: '30%',
+          boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
+          transition: 'background-color 0.3s',
         }}
       >
-        {isSidebarOpen ? 'Hide Sidebar' : 'Show Sidebar'}
-      </button>
+        {isSidebarOpen ? (
+          <ChevronLeft style={{ fontSize: '30px', color: 'white' }} />
+        ) : (
+          <ChevronRight style={{ fontSize: '30px', color: 'white' }} />
+        )}
+      </div>
 
       {/* Main Content */}
       <div
         style={{
           flex: 1,
-          padding: '20px',
-          marginLeft: isSidebarOpen ? '300px' : '0',
+          padding: '50px',
+          marginLeft: isSidebarOpen ? '280px' : '0',
           transition: 'margin-left 0.3s ease',
+          backgroundImage: `url(${bg})`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          backgroundRepeat: 'no-repeat',
+          height: '100vh',
+          overflowY: 'auto',
+          color: 'white',
+          width: isSidebarOpen ? '72vw' : '100vw',
         }}
       >
         {renderContent()}
@@ -226,7 +251,7 @@ const linkStyle = {
   display: 'block',
   padding: '10px',
   fontSize: '15px',
-  color: '#007bff',
+  color: '#ecf0f1',
   textDecoration: 'none',
   cursor: 'pointer',
   borderRadius: '4px',
