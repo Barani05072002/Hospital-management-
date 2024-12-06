@@ -19,7 +19,7 @@ const PatientDashboard = () => {
     if (path === 'logout') {
       localStorage.removeItem('auth');
       localStorage.removeItem('currentUser');
-      navigate('/login'); // Redirect to login
+      setCurrentView('login');
     } else {
       setCurrentView(path);
     }
@@ -50,8 +50,9 @@ const PatientDashboard = () => {
       case 'doctorslist':
         return renderDoctorsList();
       case 'dashboard':
-      default:
         return renderDashboard();
+      case 'login':
+        return navigate('/login');
     }
   };
 

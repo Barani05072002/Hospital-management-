@@ -1,8 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 
 const AdminDashboard = () => {
-  // Existing state and hooks
   const [users, setUsers] = useState([]);
   const [doctors, setDoctors] = useState([]);
   const [patients, setPatients] = useState([]);
@@ -23,7 +22,9 @@ const AdminDashboard = () => {
 
   const handleMenuClick = (path) => {
     if (path === 'logout') {
-      navigate('/login');
+      localStorage['auth'] = false;
+      localStorage.removeItem('currentUser');
+      setCurrentView('login');
     } else {
       setCurrentView(path);
     }
@@ -136,8 +137,9 @@ const AdminDashboard = () => {
       case 'appointments':
         return renderAppointmentsTable();
       case 'dashboard':
-      default:
         return renderDashboard();
+      case 'login':
+        return navigate('/login')
     }
   };
 
