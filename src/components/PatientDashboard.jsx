@@ -1,18 +1,21 @@
-// PatientDashboard.js
 import React, { useState, useEffect } from 'react';
+import { Card, CardContent, Typography, Button } from '@mui/material';
 import { Link, useNavigate } from 'react-router-dom';
+import { Person, List, ExitToApp, Visibility } from '@mui/icons-material';
 
 const PatientDashboard = () => {
-  const [currentView, setCurrentView] = useState('dashboard'); // Tracks the current menu selection
-  const [isSidebarOpen, setIsSidebarOpen] = useState(true); // Tracks the sidebar's open/close state
-  const [doctors, setDoctors] = useState([]); // Holds doctor data
-  const navigate = useNavigate(); // Use navigate for redirection
+  const [currentView, setCurrentView] = useState('dashboard');
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const [doctors, setDoctors] = useState([]);
+  const [appointments, setAppointments] = useState([]);
+  const navigate = useNavigate();
 
   useEffect(() => {
-    // Fetch doctors from localStorage
     const storedUsers = JSON.parse(localStorage.getItem('users')) || [];
     const doctorList = storedUsers.filter(user => user.usertype === 'doctor');
+    const appointmentList = JSON.parse(localStorage.getItem('appointments')) || [];
     setDoctors(doctorList);
+    setAppointments(appointmentList);
   }, []);
 
   const handleMenuClick = (path) => {
@@ -27,21 +30,23 @@ const PatientDashboard = () => {
 
   const handleAppointment = (doctor) => {
     const currentUser = JSON.parse(localStorage.getItem('currentUser')) || {};
-    const appointments = JSON.parse(localStorage.getItem('appointments')) || [];
+    const existingAppointments = JSON.parse(localStorage.getItem('appointments')) || [];
 
     const newAppointment = {
+      id: Date.now(),
       doctor: `${doctor.firstname} ${doctor.lastname}`,
       firstname: currentUser.firstname,
       lastname: currentUser.lastname,
       date: new Date().toLocaleDateString(),
       time: new Date().toLocaleTimeString(),
-      email : currentUser.email,
-      problem : currentUser.extraField
-
+      email: currentUser.email,
+      problem: currentUser.extraField,
+      status: 'Pending',
     };
 
-    const updatedAppointments = [...appointments, newAppointment];
+    const updatedAppointments = [...existingAppointments, newAppointment];
     localStorage.setItem('appointments', JSON.stringify(updatedAppointments));
+    setAppointments(updatedAppointments);
     alert('Appointment successfully booked!');
   };
 
@@ -53,13 +58,50 @@ const PatientDashboard = () => {
         return renderDashboard();
       case 'login':
         return navigate('/login');
+      default:
+        return renderDashboard();
     }
   };
 
   const renderDashboard = () => (
     <div>
       <h1>Patient Dashboard</h1>
-      <p>Patient-specific information and appointment details.</p>
+      <p>Here you can view and manage your appointments.</p>
+      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '20px' }}>
+        {appointments.length > 0 ? (
+          appointments.map((a) => (
+            <Card key={a.id} style={{ width: '300px', marginBottom: '20px' }}>
+              <CardContent>
+                <Typography variant="h6" component="div">
+                  Appointment with Dr. {a.doctor}
+                </Typography>
+                <Typography color="text.secondary">
+                  {a.date} at {a.time}
+                </Typography>
+                <Typography variant="body2" color="text.secondary" style={{ marginTop: '10px' }}>
+                  Problem: {a.problem}
+                </Typography>
+                <Typography variant="body2" color="text.secondary" style={{ marginTop: '10px' }}>
+                  Email: {a.email}
+                </Typography>
+                <Typography variant="body2" color="text.secondary" style={{ marginTop: '10px' }}>
+                  Status: {a.status}
+                </Typography>
+                <Button 
+                  variant="contained" 
+                  color="primary" 
+                  style={{ marginTop: '10px' }}
+                  onClick={() => alert('Appointment details will be updated here.')}
+                >
+                  View Details
+                </Button>
+              </CardContent>
+            </Card>
+          ))
+        ) : (
+          <p>No appointments booked yet.</p>
+        )}
+      </div>
     </div>
   );
 
@@ -80,12 +122,16 @@ const PatientDashboard = () => {
             {doctors.map((doctor, index) => (
               <tr key={index}>
                 <td>{`${doctor.firstname} ${doctor.lastname}`}</td>
-                <td>{doctor.specialization}</td>
+                <td>{doctor.extraField}</td>
                 <td>{doctor.email}</td>
                 <td>
-                  <button onClick={() => handleAppointment(doctor)}>
+                  <Button 
+                    variant="contained" 
+                    color="primary" 
+                    onClick={() => handleAppointment(doctor)}
+                  >
                     Book Appointment
-                  </button>
+                  </Button>
                 </td>
               </tr>
             ))}
@@ -101,7 +147,7 @@ const PatientDashboard = () => {
   const username = currentUser.firstname || 'Patient';
 
   return (
-    <div style={{ display: 'flex', height: '100vh' }}>
+    <div style={{ display: 'flex', height: '100vh', position: 'relative' }}>
       {/* Sidebar */}
       {isSidebarOpen && (
         <div
@@ -113,6 +159,8 @@ const PatientDashboard = () => {
             display: 'flex',
             flexDirection: 'column',
             gap: '20px',
+            position: 'fixed',
+            height: '100vh',
           }}
         >
           <div style={{ fontWeight: 'bold', fontSize: '16px', color: '#222' }}>
@@ -124,21 +172,21 @@ const PatientDashboard = () => {
               onClick={() => handleMenuClick('dashboard')}
               style={linkStyle}
             >
-              Dashboard
+              <Person style={{ marginRight: '8px' }} /> Dashboard
             </Link>
             <Link
               to="#"
               onClick={() => handleMenuClick('doctorslist')}
               style={linkStyle}
             >
-              Doctors List
+              <List style={{ marginRight: '8px' }} /> Doctors List
             </Link>
             <Link
               to="#"
               onClick={() => handleMenuClick('logout')}
               style={linkStyle}
             >
-              Logout
+              <ExitToApp style={{ marginRight: '8px' }} /> Logout
             </Link>
           </div>
         </div>
@@ -160,7 +208,16 @@ const PatientDashboard = () => {
       </button>
 
       {/* Main Content */}
-      <div style={{ flex: 1, padding: '20px' }}>{renderContent()}</div>
+      <div
+        style={{
+          flex: 1,
+          padding: '20px',
+          marginLeft: isSidebarOpen ? '300px' : '0',
+          transition: 'margin-left 0.3s ease',
+        }}
+      >
+        {renderContent()}
+      </div>
     </div>
   );
 };
