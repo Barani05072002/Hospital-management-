@@ -115,41 +115,47 @@ const PatientDashboard = () => {
 
   const renderDoctorsList = () => (
     <div>
-      <h2>Doctors List</h2>
-      {doctors.length > 0 ? (
-        <table border="1" style={{ width: '100%', textAlign: 'left' }}>
-          <thead>
-            <tr>
-              <th>Name</th>
-              <th>Specialization</th>
-              <th>Contact Email</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {doctors.map((doctor, index) => (
-              <tr key={index}>
-                <td>{`${doctor.firstname} ${doctor.lastname}`}</td>
-                <td>{doctor.extraField}</td>
-                <td>{doctor.email}</td>
-                <td>
-                  <Button
-                    variant="contained"
-                    color="primary"
-                    onClick={() => handleAppointment(doctor)}
-                  >
-                    Book Appointment
-                  </Button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      ) : (
-        <p>No doctors available.</p>
-      )}
+      <h2 style={{ color: '#222' }}>Doctors List</h2>
+      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '20px' }}>
+        {doctors.length > 0 ? (
+          doctors.map((doctor, index) => (
+            <Card
+              key={index}
+              style={{
+                width: '300px',
+                marginBottom: '20px',
+                border: '1px solid #ddd',
+                borderRadius: '8px',
+              }}
+            >
+              <CardContent>
+                <Typography variant="h6" component="div" style={{ marginBottom: '10px' }}>
+                  Dr. {`${doctor.firstname} ${doctor.lastname}`}
+                </Typography>
+                <Typography variant="body2" color="text.secondary">
+                  Specialization: {doctor.extraField}
+                </Typography>
+                <Typography variant="body2" color="text.secondary" style={{ marginTop: '10px' }}>
+                  Contact: {doctor.email}
+                </Typography>
+                <Button
+                  variant="contained"
+                  color="primary"
+                  style={{ marginTop: '10px' }}
+                  onClick={() => handleAppointment(doctor)}
+                >
+                  Book Appointment
+                </Button>
+              </CardContent>
+            </Card>
+          ))
+        ) : (
+          <p>No doctors available.</p>
+        )}
+      </div>
     </div>
   );
+  
 
   const currentUser = JSON.parse(localStorage.getItem('currentUser')) || {};
   const username = currentUser.firstname || 'Patient';
