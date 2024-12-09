@@ -1,32 +1,57 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import {
+  Drawer,
+  List,
+  ListItem,
+  ListItemText,
+  ListItemIcon,
+  IconButton,
+  Typography,
+  Box,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Paper,
+  Toolbar,
+  AppBar,
+  CssBaseline,
+  Divider,
+  Button
+} from '@mui/material';
+import {
+  Dashboard as DashboardIcon,
+  People as PeopleIcon,
+  Event as EventIcon,
+  Logout as LogoutIcon,
+  ChevronLeft,
+} from '@mui/icons-material';
 
 const DoctorDashboard = () => {
-  const [currentView, setCurrentView] = useState('dashboard'); // Tracks the current menu selection
-  const [isSidebarOpen, setIsSidebarOpen] = useState(true); // Tracks the sidebar's open/close state
+  const [currentView, setCurrentView] = useState('dashboard');
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [patients, setPatients] = useState([]);
   const [appointments, setAppointments] = useState([]);
-  const navigate = useNavigate(); // Use navigate for redirection
+  const navigate = useNavigate();
 
   useEffect(() => {
-    // Fetch patient and appointment data from localStorage
-    const storedUsers = JSON.parse(localStorage.getItem('users')) || [];
     const storedAppointments = JSON.parse(localStorage.getItem('appointments')) || [];
-    console.log(storedAppointments)
-
-    // Filter patients for the current doctor
     const currentUser = JSON.parse(localStorage.getItem('currentUser')) || {};
-    const doctorPatients = storedAppointments.filter(app => app.doctor === `${currentUser.firstname} ${currentUser.lastname}`);
-    
+    const doctorPatients = storedAppointments.filter(
+      (app) => app.doctor === `${currentUser.firstname} ${currentUser.lastname}`
+    );
     setAppointments(doctorPatients);
-    setPatients(doctorPatients)
+    setPatients(doctorPatients);
   }, []);
 
   const handleMenuClick = (path) => {
     if (path === 'logout') {
       localStorage.removeItem('auth');
       localStorage.removeItem('currentUser');
-      setCurrentView('login'); 
+      navigate('/login');
     } else {
       setCurrentView(path);
     }
@@ -38,162 +63,165 @@ const DoctorDashboard = () => {
         return renderPatientList();
       case 'appointmentlist':
         return renderAppointmentList();
-      case 'dashboard':
+      default:
         return renderDashboard();
-      case 'login':
-        return navigate('/login');
     }
   };
 
   const renderDashboard = () => (
-    <div>
-      <h1>Doctor Dashboard</h1>
-      <p>Doctor-specific tools and patient management.</p>
-    </div>
+    <Box>
+      <Typography variant="h4">Doctor Dashboard</Typography>
+      <Typography variant="body1">
+        Manage your patients and appointments.
+      </Typography>
+    </Box>
   );
 
   const renderPatientList = () => (
-    <div>
-      <h2>Patient List</h2>
-      {patients.length > 0 ? (
-        <table border="1" style={{ width: '100%', textAlign: 'left' }}>
-          <thead>
-            <tr>
-              <th>Name</th>
-              <th>Email</th>
-              <th>Contact</th>
-              <th>Problem</th>
-            </tr>
-          </thead>
-          <tbody>
-            {patients.map((patient, index) => (
-              <tr key={index}>
-                <td>{patient.firstname}</td>
-                <td>{patient.lastname}</td>
-                <td>{patient.email}</td>
-                <td>{patient.problem}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      ) : (
-        <p>No patients assigned.</p>
-      )}
-    </div>
+    <TableContainer component={Paper}>
+      <Typography variant="h5" gutterBottom>
+        Patient List
+      </Typography>
+      <Table>
+        <TableHead>
+          <TableRow>
+            <TableCell>Name</TableCell>
+            <TableCell>Email</TableCell>
+            <TableCell>Contact</TableCell>
+            <TableCell>Problem</TableCell>
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          {patients.length > 0 ? (
+            patients.map((patient, index) => (
+              <TableRow key={index}>
+                <TableCell>{`${patient.firstname} ${patient.lastname}`}</TableCell>
+                <TableCell>{patient.email}</TableCell>
+                <TableCell>{patient.contact}</TableCell>
+                <TableCell>{patient.problem}</TableCell>
+              </TableRow>
+            ))
+          ) : (
+            <TableRow>
+              <TableCell colSpan={4}>No patients assigned.</TableCell>
+            </TableRow>
+          )}
+        </TableBody>
+      </Table>
+    </TableContainer>
   );
 
   const renderAppointmentList = () => (
-    <div>
-      <h2>Appointment List</h2>
-      {appointments.length > 0 ? (
-        <table border="1" style={{ width: '100%', textAlign: 'left' }}>
-          <thead>
-            <tr>
-              <th>Patient</th>
-              <th>Date</th>
-              <th>Time</th>
-            </tr>
-          </thead>
-          <tbody>
-            {appointments.map((appointment, index) => (
-              <tr key={index}>
-                <td>{`${appointment.firstname} ${appointment.lastname}`}</td>
-                <td>{appointment.date}</td>
-                <td>{appointment.time}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      ) : (
-        <p>No appointments scheduled.</p>
-      )}
-    </div>
+    <TableContainer component={Paper}>
+      <Typography variant="h5" gutterBottom>
+        Appointment List
+      </Typography>
+      <Table>
+        <TableHead>
+          <TableRow>
+            <TableCell>Patient</TableCell>
+            <TableCell>Date</TableCell>
+            <TableCell>Time</TableCell>
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          {appointments.length > 0 ? (
+            appointments.map((appointment, index) => (
+              <TableRow key={index}>
+                <TableCell>{`${appointment.firstname} ${appointment.lastname}`}</TableCell>
+                <TableCell>{appointment.date}</TableCell>
+                <TableCell>{appointment.time}</TableCell>
+              </TableRow>
+            ))
+          ) : (
+            <TableRow>
+              <TableCell colSpan={3}>No appointments scheduled.</TableCell>
+            </TableRow>
+          )}
+        </TableBody>
+      </Table>
+    </TableContainer>
   );
 
   const currentUser = JSON.parse(localStorage.getItem('currentUser')) || {};
   const username = currentUser.firstname || 'Doctor';
 
   return (
-    <div style={{ display: 'flex', height: '100vh' }}>
-      {/* Sidebar */}
-      {isSidebarOpen && (
-        <div
-          style={{
-            width: '250px',
-            backgroundColor: '#f8f9fa',
-            padding: '20px',
-            borderRight: '1px solid #ddd',
-            display: 'flex',
-            flexDirection: 'column',
-            gap: '20px',
-          }}
-        >
-          <div style={{ fontWeight: 'bold', fontSize: '16px', color: '#222' }}>
-            {`Welcome, ${username}`}
-          </div>
-          <div>
-            <Link
-              to="#"
-              onClick={() => handleMenuClick('dashboard')}
-              style={linkStyle}
-            >
-              Dashboard
-            </Link>
-            <Link
-              to="#"
-              onClick={() => handleMenuClick('patientlist')}
-              style={linkStyle}
-            >
-              Patient List
-            </Link>
-            <Link
-              to="#"
-              onClick={() => handleMenuClick('appointmentlist')}
-              style={linkStyle}
-            >
-              Appointment List
-            </Link>
-            <Link
-              to="#"
-              onClick={() => handleMenuClick('logout')}
-              style={linkStyle}
-            >
-              Logout
-            </Link>
-          </div>
-        </div>
-      )}
-
-      {/* Toggle Button */}
-      <button
-        onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-        style={{
-          position: 'absolute',
-          top: '10px',
-          left: isSidebarOpen ? '260px' : '10px',
-          zIndex: 1,
-          padding: '10px',
-          cursor: 'pointer',
+    <Box sx={{ display: 'flex', position: 'relative' }}>
+      <CssBaseline />
+      <Drawer
+        variant="persistent"
+        anchor="left"
+        open={isSidebarOpen}
+        sx={{
+          width: 240,
+          flexShrink: 0,
+          '& .MuiDrawer-paper': {
+            width: 240,
+            boxSizing: 'border-box',
+          },
         }}
       >
-        {isSidebarOpen ? 'Hide Sidebar' : 'Show Sidebar'}
-      </button>
-
-      {/* Main Content */}
-      <div style={{ flex: 1, padding: '20px' }}>{renderContent()}</div>
-    </div>
+        <Toolbar />
+        <Box sx={{ padding: 2 }}>
+          <Typography variant="h6">Welcome, {username}</Typography>
+        </Box>
+        <Divider />
+        <List>
+          <ListItem button onClick={() => handleMenuClick('dashboard')}>
+            <ListItemIcon>
+              <DashboardIcon />
+            </ListItemIcon>
+            <ListItemText primary="Dashboard" />
+          </ListItem>
+          <ListItem button onClick={() => handleMenuClick('patientlist')}>
+            <ListItemIcon>
+              <PeopleIcon />
+            </ListItemIcon>
+            <ListItemText primary="Patient List" />
+          </ListItem>
+          <ListItem button onClick={() => handleMenuClick('appointmentlist')}>
+            <ListItemIcon>
+              <EventIcon />
+            </ListItemIcon>
+            <ListItemText primary="Appointment List" />
+          </ListItem>
+          <ListItem button onClick={() => handleMenuClick('logout')}>
+            <ListItemIcon>
+              <LogoutIcon />
+            </ListItemIcon>
+            <ListItemText primary="Logout" />
+          </ListItem>
+        </List>
+      </Drawer>
+      <Box
+        component="main"
+        sx={{
+          flexGrow: 1,
+          p: 3,
+          transition: 'margin 0.3s',
+          marginLeft: isSidebarOpen ? '240px' : '0',
+          width: isSidebarOpen ? 'calc(100% - 240px)' : '100%',
+        }}
+      >
+        <Toolbar />
+        {renderContent()}
+      </Box>
+      <IconButton
+        onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+        sx={{
+          position: 'fixed',
+          top: '16px',
+          left: isSidebarOpen ? '240px' : '16px',
+          zIndex: 1000,
+          backgroundColor: 'white',
+          boxShadow: 1,
+        }}
+      >
+        <ChevronLeft />
+      </IconButton>
+    </Box>
   );
-};
-
-const linkStyle = {
-  display: 'block',
-  padding: '10px',
-  fontSize: '15px',
-  color: '#007bff',
-  textDecoration: 'none',
-  cursor: 'pointer',
-  borderRadius: '4px',
-  transition: 'background-color 0.3s',
 };
 
 export default DoctorDashboard;
