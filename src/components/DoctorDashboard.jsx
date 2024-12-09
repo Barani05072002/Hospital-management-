@@ -9,18 +9,15 @@ import {
   IconButton,
   Typography,
   Box,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Paper,
+  Card,
+  CardContent,
+  CardActions,
+  Button,
   Toolbar,
   AppBar,
   CssBaseline,
   Divider,
-  Button
+  Paper
 } from '@mui/material';
 import {
   Dashboard as DashboardIcon,
@@ -57,6 +54,14 @@ const DoctorDashboard = () => {
     }
   };
 
+  const handleCompleteAppointment = (id) => {
+    const updatedAppointments = appointments.map((appointment) =>
+      appointment.id === id ? { ...appointment, status: 'Completed' } : appointment
+    );
+    setAppointments(updatedAppointments);
+    localStorage.setItem('appointments', JSON.stringify(updatedAppointments));
+  };
+
   const renderContent = () => {
     switch (currentView) {
       case 'patientlist':
@@ -78,69 +83,60 @@ const DoctorDashboard = () => {
   );
 
   const renderPatientList = () => (
-    <TableContainer component={Paper} sx={{ boxShadow: 3, borderRadius: 2 }}>
+    <Box>
       <Typography variant="h5" gutterBottom color="secondary">
         Patient List
       </Typography>
-      <Table>
-        <TableHead>
-          <TableRow sx={{ backgroundColor: 'primary.main' }}>
-            <TableCell sx={{ color: 'white' }}>Name</TableCell>
-            <TableCell sx={{ color: 'white' }}>Email</TableCell>
-            <TableCell sx={{ color: 'white' }}>Contact</TableCell>
-            <TableCell sx={{ color: 'white' }}>Problem</TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {patients.length > 0 ? (
-            patients.map((patient, index) => (
-              <TableRow key={index}>
-                <TableCell>{`${patient.firstname} ${patient.lastname}`}</TableCell>
-                <TableCell>{patient.email}</TableCell>
-                <TableCell>{patient.contact}</TableCell>
-                <TableCell>{patient.problem}</TableCell>
-              </TableRow>
-            ))
-          ) : (
-            <TableRow>
-              <TableCell colSpan={4}>No patients assigned.</TableCell>
-            </TableRow>
-          )}
-        </TableBody>
-      </Table>
-    </TableContainer>
+      <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: '20px' }}>
+        {patients.length > 0 ? (
+          patients.map((patient, index) => (
+            <Card key={index} sx={{ width: '300px', boxShadow: 3 }}>
+              <CardContent>
+                <Typography variant="h6">{`${patient.firstname} ${patient.lastname}`}</Typography>
+                <Typography color="text.secondary">Email: {patient.email}</Typography>
+                <Typography color="text.secondary">Contact: {patient.contact}</Typography>
+                <Typography color="text.secondary">Problem: {patient.problem}</Typography>
+              </CardContent>
+            </Card>
+          ))
+        ) : (
+          <Typography>No patients assigned.</Typography>
+        )}
+      </Box>
+    </Box>
   );
 
   const renderAppointmentList = () => (
-    <TableContainer component={Paper} sx={{ boxShadow: 3, borderRadius: 2 }}>
+    <Box>
       <Typography variant="h5" gutterBottom color="secondary">
         Appointment List
       </Typography>
-      <Table>
-        <TableHead>
-          <TableRow sx={{ backgroundColor: 'primary.main' }}>
-            <TableCell sx={{ color: 'white' }}>Patient</TableCell>
-            <TableCell sx={{ color: 'white' }}>Date</TableCell>
-            <TableCell sx={{ color: 'white' }}>Time</TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {appointments.length > 0 ? (
-            appointments.map((appointment, index) => (
-              <TableRow key={index}>
-                <TableCell>{`${appointment.firstname} ${appointment.lastname}`}</TableCell>
-                <TableCell>{appointment.date}</TableCell>
-                <TableCell>{appointment.time}</TableCell>
-              </TableRow>
-            ))
-          ) : (
-            <TableRow>
-              <TableCell colSpan={3}>No appointments scheduled.</TableCell>
-            </TableRow>
-          )}
-        </TableBody>
-      </Table>
-    </TableContainer>
+      {appointments.length > 0 ? (
+        appointments.map((appointment, index) => (
+          <Card key={index} sx={{ marginBottom: 2, boxShadow: 3 }}>
+            <CardContent>
+              <Typography variant="h6">{`${appointment.firstname} ${appointment.lastname}`}</Typography>
+              <Typography>Date: {appointment.date}</Typography>
+              <Typography>Time: {appointment.time}</Typography>
+              <Typography>Status: {appointment.status || 'Pending'}</Typography>
+            </CardContent>
+            <CardActions>
+              {appointment.status !== 'Completed' && (
+                <Button
+                  variant="contained"
+                  color="primary"
+                  onClick={() => handleCompleteAppointment(appointment.id)}
+                >
+                  Complete
+                </Button>
+              )}
+            </CardActions>
+          </Card>
+        ))
+      ) : (
+        <Typography>No appointments scheduled.</Typography>
+      )}
+    </Box>
   );
 
   const currentUser = JSON.parse(localStorage.getItem('currentUser')) || {};
@@ -154,7 +150,6 @@ const DoctorDashboard = () => {
         anchor="left"
         open={isSidebarOpen}
         sx={{
-          width: 240,
           flexShrink: 0,
           '& .MuiDrawer-paper': {
             width: 240,
@@ -197,19 +192,30 @@ const DoctorDashboard = () => {
           </ListItem>
         </List>
       </Drawer>
+
       <Box
         component="main"
         sx={{
           flexGrow: 1,
           p: 4,
-          transition: 'margin 0.3s',
+          transition: 'margin 0.3s ease',
           marginLeft: isSidebarOpen ? '240px' : '0',
-          width: isSidebarOpen ? 'calc(82vw - 240px)' : '82vw',
+          width: isSidebarOpen ? '82vw' : '100vw',
+          backgroundColor: '#fff',
+          borderRadius: '8px',
+          boxShadow: '0px 4px 20px rgba(0, 0, 0, 0.1)',
+          paddingBottom: '20px',
+          border: '1px solid #e0e0e0',
+          display: 'flex',
+          flexDirection: 'column',
         }}
       >
         <Toolbar />
-        {renderContent()}
+        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+          {renderContent()}
+        </Box>
       </Box>
+
       <IconButton
         onClick={() => setIsSidebarOpen(!isSidebarOpen)}
         sx={{
