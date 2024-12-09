@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { Card, CardContent, Typography, Button } from '@mui/material';
+import { Card, CardContent, Typography, Button, Dialog, DialogActions, DialogContent, TextField, MenuItem, Select, InputLabel, FormControl } from '@mui/material';
 import { Link, useNavigate } from 'react-router-dom';
 import { Person, List, ExitToApp, ChevronLeft, ChevronRight } from '@mui/icons-material';
 import bg from '../images/blur-hospital.jpg';
-import defaultProfilePic from '../images/doctor.png'; // You can replace this with the actual default profile image path
+import defaultProfilePic from '../images/doctor.png';
 import patienProfilePic from '../images/user_219988.png';
 
 const PatientDashboard = () => {
@@ -11,6 +11,9 @@ const PatientDashboard = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [doctors, setDoctors] = useState([]);
   const [appointments, setAppointments] = useState([]);
+  const [openAppointmentDialog, setOpenAppointmentDialog] = useState(false);
+  const [selectedDoctor, setSelectedDoctor] = useState('');
+  const [problem, setProblem] = useState('');
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -31,25 +34,26 @@ const PatientDashboard = () => {
     }
   };
 
-  const handleAppointment = (doctor) => {
+  const handleAppointment = () => {
     const currentUser = JSON.parse(localStorage.getItem('currentUser')) || {};
     const existingAppointments = JSON.parse(localStorage.getItem('appointments')) || [];
 
     const newAppointment = {
       id: Date.now(),
-      doctor: `${doctor.firstname} ${doctor.lastname}`,
+      doctor: selectedDoctor,
       firstname: currentUser.firstname,
       lastname: currentUser.lastname,
       date: new Date().toLocaleDateString(),
       time: new Date().toLocaleTimeString(),
       email: currentUser.email,
-      problem: currentUser.extraField,
+      problem: problem,
       status: 'Pending',
     };
 
     const updatedAppointments = [...existingAppointments, newAppointment];
     localStorage.setItem('appointments', JSON.stringify(updatedAppointments));
     setAppointments(updatedAppointments);
+    setOpenAppointmentDialog(false);  // Close the form
     alert('Appointment successfully booked!');
   };
 
@@ -114,69 +118,79 @@ const PatientDashboard = () => {
       </div>
     </div>
   );
-
-  const renderDoctorsList = () => (
-    <div>
-      <h2 style={{ color: '#222' }}>Doctors List</h2>
-      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '20px' }}>
-        {doctors.length > 0 ? (
-          doctors.map((doctor, index) => (
-            <Card
-              key={index}
-              style={{
-                width: '300px',
-                marginBottom: '20px',
-                border: '1px solid #ddd',
-                borderRadius: '8px',
-              }}
-            >
-              <CardContent>
-                <div style={{ display: 'flex', alignItems: 'center' }}>
-                  {/* Profile Picture */}
-                  <img
-                    src={doctor.profilePic || defaultProfilePic} // If profilePic is not available, use default
-                    alt="Profile"
-                    style={{
-                      width: '50px',
-                      height: '50px',
-                      borderRadius: '50%',
-                      objectFit: 'cover',
-                      marginRight: '10px',
-                    }}
-                  />
-                  <div>
-                    <Typography variant="h6" component="div" style={{ marginBottom: '10px' }}>
-                      Dr. {`${doctor.firstname} ${doctor.lastname}`}
-                    </Typography>
-                    <Typography variant="body2" color="text.secondary">
-                      Specialization: {doctor.extraField}
-                    </Typography>
-                    <Typography variant="body2" color="text.secondary" style={{ marginTop: '10px' }}>
-                      Contact: {doctor.email}
-                    </Typography>
-                    <Button
-                      variant="contained"
-                      color="primary"
-                      style={{ marginTop: '10px' }}
-                      onClick={() => handleAppointment(doctor)}
-                    >
-                      Book Appointment
-                    </Button>
-                  </div>
+const renderDoctorsList = () => (
+  <div>
+    <h2 style={{ color: '#222' }}>Doctors List</h2>
+    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '20px' }}>
+      {doctors.length > 0 ? (
+        doctors.map((doctor, index) => (
+          <Card
+            key={index}
+            style={{
+              width: '300px',
+              marginBottom: '20px',
+              border: '1px solid #ddd',
+              borderRadius: '8px',
+              position: 'relative',
+            }}
+          >
+            <CardContent>
+              <div style={{ display: 'flex', alignItems: 'center' }}>
+                <img
+                  src={doctor.profilePic || defaultProfilePic}
+                  alt="Profile"
+                  style={{
+                    width: '50px',
+                    height: '50px',
+                    borderRadius: '50%',
+                    objectFit: 'cover',
+                    marginRight: '10px',
+                  }}
+                />
+                <div>
+                  <Typography variant="h6" component="div" style={{ marginBottom: '10px' }}>
+                    Dr. {`${doctor.firstname} ${doctor.lastname}`}
+                  </Typography>
+                  <Typography variant="body2" color="text.secondary">
+                    Specialization: {doctor.extraField}
+                  </Typography>
+                  <Typography variant="body2" color="text.secondary" style={{ marginTop: '10px' }}>
+                    Contact: {doctor.email}
+                  </Typography>
                 </div>
-              </CardContent>
-            </Card>
-          ))
-        ) : (
-          <p>No doctors available.</p>
-        )}
-      </div>
+              </div>
+              {/* Book Appointment Button placed below content */}
+              <div style={{ display: 'flex', justifyContent: 'center', marginTop: '20px' }}>
+                <Button
+                  variant="contained"
+                  color="primary"
+                  onClick={() => {
+                    setSelectedDoctor(`${doctor.firstname} ${doctor.lastname}`);
+                    setOpenAppointmentDialog(true);
+                  }}
+                  style={{
+                    backgroundColor: '#3498db',
+                    color: 'white',
+                    width: '100%', // To ensure the button spans the entire width
+                  }}
+                >
+                  Book Appointment
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        ))
+      ) : (
+        <p>No doctors available.</p>
+      )}
     </div>
-  );
+  </div>
+);
+
 
   const currentUser = JSON.parse(localStorage.getItem('currentUser')) || {};
   const username = currentUser.firstname || 'Patient';
-  const profilePic = currentUser.profilePic || defaultProfilePic; // Fetch the profile picture or use the default
+  const profilePic = currentUser.profilePic || defaultProfilePic;
 
   return (
     <div style={{ display: 'flex', height: '100vh', position: 'relative' }}>
@@ -197,7 +211,6 @@ const PatientDashboard = () => {
           }}
         >
           <div style={{ textAlign: 'center' }}>
-            {/* Profile Picture */}
             <img
               src={patienProfilePic}
               alt="Profile"
@@ -209,7 +222,6 @@ const PatientDashboard = () => {
                 marginBottom: '10px',
               }}
             />
-            {/* Username */}
             <div style={{ fontWeight: 'bold', fontSize: '16px', color: '#ecf0f1' }}>
               {`Welcome, ${username}`}
             </div>
@@ -283,6 +295,40 @@ const PatientDashboard = () => {
       >
         {renderContent()}
       </div>
+
+      {/* Appointment Dialog */}
+      <Dialog open={openAppointmentDialog} onClose={() => setOpenAppointmentDialog(false)}>
+        <DialogContent>
+          <h3>Book Appointment with {selectedDoctor}</h3>
+          <TextField
+            label="Problem"
+            fullWidth
+            multiline
+            rows={4}
+            value={problem}
+            onChange={(e) => setProblem(e.target.value)}
+            style={{ marginBottom: '15px' }}
+          />
+          <FormControl fullWidth style={{ marginBottom: '15px' }}>
+            <InputLabel>Doctor</InputLabel>
+            <Select
+              value={selectedDoctor}
+              onChange={(e) => setSelectedDoctor(e.target.value)}
+              label="Doctor"
+            >
+              {doctors.map((doctor, index) => (
+                <MenuItem key={index} value={`${doctor.firstname} ${doctor.lastname}`}>
+                  Dr. {doctor.firstname} {doctor.lastname}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setOpenAppointmentDialog(false)} color="secondary">Cancel</Button>
+          <Button onClick={handleAppointment} color="primary">Book Appointment</Button>
+        </DialogActions>
+      </Dialog>
     </div>
   );
 };
