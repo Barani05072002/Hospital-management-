@@ -3,6 +3,8 @@ import { Card, CardContent, Typography, Button } from '@mui/material';
 import { Link, useNavigate } from 'react-router-dom';
 import { Person, List, ExitToApp, ChevronLeft, ChevronRight } from '@mui/icons-material';
 import bg from '../images/blur-hospital.jpg';
+import defaultProfilePic from '../images/doctor.png'; // You can replace this with the actual default profile image path
+import patienProfilePic from '../images/user_219988.png';
 
 const PatientDashboard = () => {
   const [currentView, setCurrentView] = useState('dashboard');
@@ -129,23 +131,39 @@ const PatientDashboard = () => {
               }}
             >
               <CardContent>
-                <Typography variant="h6" component="div" style={{ marginBottom: '10px' }}>
-                  Dr. {`${doctor.firstname} ${doctor.lastname}`}
-                </Typography>
-                <Typography variant="body2" color="text.secondary">
-                  Specialization: {doctor.extraField}
-                </Typography>
-                <Typography variant="body2" color="text.secondary" style={{ marginTop: '10px' }}>
-                  Contact: {doctor.email}
-                </Typography>
-                <Button
-                  variant="contained"
-                  color="primary"
-                  style={{ marginTop: '10px' }}
-                  onClick={() => handleAppointment(doctor)}
-                >
-                  Book Appointment
-                </Button>
+                <div style={{ display: 'flex', alignItems: 'center' }}>
+                  {/* Profile Picture */}
+                  <img
+                    src={doctor.profilePic || defaultProfilePic} // If profilePic is not available, use default
+                    alt="Profile"
+                    style={{
+                      width: '50px',
+                      height: '50px',
+                      borderRadius: '50%',
+                      objectFit: 'cover',
+                      marginRight: '10px',
+                    }}
+                  />
+                  <div>
+                    <Typography variant="h6" component="div" style={{ marginBottom: '10px' }}>
+                      Dr. {`${doctor.firstname} ${doctor.lastname}`}
+                    </Typography>
+                    <Typography variant="body2" color="text.secondary">
+                      Specialization: {doctor.extraField}
+                    </Typography>
+                    <Typography variant="body2" color="text.secondary" style={{ marginTop: '10px' }}>
+                      Contact: {doctor.email}
+                    </Typography>
+                    <Button
+                      variant="contained"
+                      color="primary"
+                      style={{ marginTop: '10px' }}
+                      onClick={() => handleAppointment(doctor)}
+                    >
+                      Book Appointment
+                    </Button>
+                  </div>
+                </div>
               </CardContent>
             </Card>
           ))
@@ -155,10 +173,10 @@ const PatientDashboard = () => {
       </div>
     </div>
   );
-  
 
   const currentUser = JSON.parse(localStorage.getItem('currentUser')) || {};
   const username = currentUser.firstname || 'Patient';
+  const profilePic = currentUser.profilePic || defaultProfilePic; // Fetch the profile picture or use the default
 
   return (
     <div style={{ display: 'flex', height: '100vh', position: 'relative' }}>
@@ -178,9 +196,25 @@ const PatientDashboard = () => {
             color: 'white',
           }}
         >
-          <div style={{ fontWeight: 'bold', fontSize: '16px', color: '#ecf0f1' }}>
-            {`Welcome, ${username}`}
+          <div style={{ textAlign: 'center' }}>
+            {/* Profile Picture */}
+            <img
+              src={patienProfilePic}
+              alt="Profile"
+              style={{
+                width: '80px',
+                height: '80px',
+                borderRadius: '50%',
+                objectFit: 'cover',
+                marginBottom: '10px',
+              }}
+            />
+            {/* Username */}
+            <div style={{ fontWeight: 'bold', fontSize: '16px', color: '#ecf0f1' }}>
+              {`Welcome, ${username}`}
+            </div>
           </div>
+
           <div>
             <Link
               to="#"
