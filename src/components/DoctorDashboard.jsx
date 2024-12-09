@@ -70,25 +70,25 @@ const DoctorDashboard = () => {
 
   const renderDashboard = () => (
     <Box>
-      <Typography variant="h4">Doctor Dashboard</Typography>
-      <Typography variant="body1">
+      <Typography variant="h4" color="primary">Doctor Dashboard</Typography>
+      <Typography variant="body1" sx={{ color: 'text.secondary' }}>
         Manage your patients and appointments.
       </Typography>
     </Box>
   );
 
   const renderPatientList = () => (
-    <TableContainer component={Paper}>
-      <Typography variant="h5" gutterBottom>
+    <TableContainer component={Paper} sx={{ boxShadow: 3, borderRadius: 2 }}>
+      <Typography variant="h5" gutterBottom color="secondary">
         Patient List
       </Typography>
       <Table>
         <TableHead>
-          <TableRow>
-            <TableCell>Name</TableCell>
-            <TableCell>Email</TableCell>
-            <TableCell>Contact</TableCell>
-            <TableCell>Problem</TableCell>
+          <TableRow sx={{ backgroundColor: 'primary.main' }}>
+            <TableCell sx={{ color: 'white' }}>Name</TableCell>
+            <TableCell sx={{ color: 'white' }}>Email</TableCell>
+            <TableCell sx={{ color: 'white' }}>Contact</TableCell>
+            <TableCell sx={{ color: 'white' }}>Problem</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
@@ -112,16 +112,16 @@ const DoctorDashboard = () => {
   );
 
   const renderAppointmentList = () => (
-    <TableContainer component={Paper}>
-      <Typography variant="h5" gutterBottom>
+    <TableContainer component={Paper} sx={{ boxShadow: 3, borderRadius: 2 }}>
+      <Typography variant="h5" gutterBottom color="secondary">
         Appointment List
       </Typography>
       <Table>
         <TableHead>
-          <TableRow>
-            <TableCell>Patient</TableCell>
-            <TableCell>Date</TableCell>
-            <TableCell>Time</TableCell>
+          <TableRow sx={{ backgroundColor: 'primary.main' }}>
+            <TableCell sx={{ color: 'white' }}>Patient</TableCell>
+            <TableCell sx={{ color: 'white' }}>Date</TableCell>
+            <TableCell sx={{ color: 'white' }}>Time</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
@@ -147,7 +147,7 @@ const DoctorDashboard = () => {
   const username = currentUser.firstname || 'Doctor';
 
   return (
-    <Box sx={{ display: 'flex', position: 'relative' }}>
+    <Box sx={{ display: 'flex', position: 'relative', backgroundColor: '#f0f4f7', minHeight: '100vh' }}>
       <CssBaseline />
       <Drawer
         variant="persistent"
@@ -159,35 +159,38 @@ const DoctorDashboard = () => {
           '& .MuiDrawer-paper': {
             width: 240,
             boxSizing: 'border-box',
+            backgroundColor: '#2c3e50',
+            color: 'white',
+            zIndex: 800,
           },
         }}
       >
         <Toolbar />
         <Box sx={{ padding: 2 }}>
-          <Typography variant="h6">Welcome, {username}</Typography>
+          <Typography variant="h6" color="inherit">Welcome, {username}</Typography>
         </Box>
-        <Divider />
+        <Divider sx={{ backgroundColor: 'rgba(255, 255, 255, 0.2)' }} />
         <List>
-          <ListItem button onClick={() => handleMenuClick('dashboard')}>
-            <ListItemIcon>
+          <ListItem button onClick={() => handleMenuClick('dashboard')} sx={{ '&:hover': { backgroundColor: 'rgba(255, 255, 255, 0.1)' } }}>
+            <ListItemIcon sx={{ color: 'white' }}>
               <DashboardIcon />
             </ListItemIcon>
             <ListItemText primary="Dashboard" />
           </ListItem>
-          <ListItem button onClick={() => handleMenuClick('patientlist')}>
-            <ListItemIcon>
+          <ListItem button onClick={() => handleMenuClick('patientlist')} sx={{ '&:hover': { backgroundColor: 'rgba(255, 255, 255, 0.1)' } }}>
+            <ListItemIcon sx={{ color: 'white' }}>
               <PeopleIcon />
             </ListItemIcon>
             <ListItemText primary="Patient List" />
           </ListItem>
-          <ListItem button onClick={() => handleMenuClick('appointmentlist')}>
-            <ListItemIcon>
+          <ListItem button onClick={() => handleMenuClick('appointmentlist')} sx={{ '&:hover': { backgroundColor: 'rgba(255, 255, 255, 0.1)' } }}>
+            <ListItemIcon sx={{ color: 'white' }}>
               <EventIcon />
             </ListItemIcon>
             <ListItemText primary="Appointment List" />
           </ListItem>
-          <ListItem button onClick={() => handleMenuClick('logout')}>
-            <ListItemIcon>
+          <ListItem button onClick={() => handleMenuClick('logout')} sx={{ '&:hover': { backgroundColor: 'rgba(255, 255, 255, 0.1)' } }}>
+            <ListItemIcon sx={{ color: 'white' }}>
               <LogoutIcon />
             </ListItemIcon>
             <ListItemText primary="Logout" />
@@ -198,10 +201,10 @@ const DoctorDashboard = () => {
         component="main"
         sx={{
           flexGrow: 1,
-          p: 3,
+          p: 4,
           transition: 'margin 0.3s',
           marginLeft: isSidebarOpen ? '240px' : '0',
-          width: isSidebarOpen ? 'calc(100% - 240px)' : '100%',
+          width: isSidebarOpen ? 'calc(82vw - 240px)' : '82vw',
         }}
       >
         <Toolbar />
@@ -212,7 +215,7 @@ const DoctorDashboard = () => {
         sx={{
           position: 'fixed',
           top: '16px',
-          left: isSidebarOpen ? '240px' : '16px',
+          left: isSidebarOpen ? '220px' : '16px',
           zIndex: 1000,
           backgroundColor: 'white',
           boxShadow: 1,
