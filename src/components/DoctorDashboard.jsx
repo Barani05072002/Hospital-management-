@@ -25,6 +25,7 @@ import {
   Event as EventIcon,
   Logout as LogoutIcon,
   ChevronLeft,
+  Person as PersonIcon,
 } from '@mui/icons-material';
 
 const DoctorDashboard = () => {
@@ -74,11 +75,34 @@ const DoctorDashboard = () => {
   };
 
   const renderDashboard = () => (
-    <Box>
-      <Typography variant="h4" color="primary">Doctor Dashboard</Typography>
-      <Typography variant="body1" sx={{ color: 'text.secondary' }}>
-        Manage your patients and appointments.
-      </Typography>
+    <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: '20px' }}>
+      <Card sx={{ width: '300px', boxShadow: 3, padding: 2 }}>
+        <CardContent>
+          <Typography variant="h6" color="primary">
+            Total Patients
+          </Typography>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+            <PersonIcon sx={{ fontSize: 40, color: '#2c3e50' }} />
+            <Typography variant="h5" color="secondary">
+              {patients.length}
+            </Typography>
+          </Box>
+        </CardContent>
+      </Card>
+
+      <Card sx={{ width: '300px', boxShadow: 3, padding: 2 }}>
+        <CardContent>
+          <Typography variant="h6" color="primary">
+            Total Appointments
+          </Typography>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+            <EventIcon sx={{ fontSize: 40, color: '#2c3e50' }} />
+            <Typography variant="h5" color="secondary">
+              {appointments.length}
+            </Typography>
+          </Box>
+        </CardContent>
+      </Card>
     </Box>
   );
 
