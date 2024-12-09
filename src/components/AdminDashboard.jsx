@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { List, ListItem, ListItemText, IconButton, Table, TableHead, TableRow, TableCell, TableBody, TableContainer, Paper, Button, Card, CardContent, Typography, Dialog, DialogActions, DialogContent, DialogTitle, TextField } from '@mui/material';
 import { Dashboard, People, Person, Event, ExitToApp, ChevronLeft, ChevronRight, MedicalServices, PersonAdd, CalendarToday } from '@mui/icons-material';
 import bg from '../images/blur-hospital.jpg'; // Import your background image
@@ -11,7 +11,16 @@ const AdminDashboard = () => {
   const [currentView, setCurrentView] = useState('dashboard');
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [openDialog, setOpenDialog] = useState(false);
-  const [newDoctor, setNewDoctor] = useState({ firstname: '', lastname: '', email: '', usertype: 'doctor' });
+  const [newDoctor, setNewDoctor] = useState({ firstname: '', lastname: '', email: '', password: '', specialization: '', usertype: 'doctor' });
+  const specializations = [
+    'Cardiology', 
+    'Dermatology', 
+    'Neurology', 
+    'Pediatrics', 
+    'Orthopedics', 
+    'Psychiatry', 
+    'Radiology'
+  ];
 
   useEffect(() => {
     const storedUsers = JSON.parse(localStorage.getItem('users')) || [];
@@ -23,23 +32,25 @@ const AdminDashboard = () => {
     setAppointments(storedAppointments);
   }, []);
 
-  const handleMenuClick = (path) => {
+  // Memoize menu click handler to avoid unnecessary rerenders
+  const handleMenuClick = useCallback((path) => {
     if (path === 'logout') {
       localStorage['auth'] = false;
       localStorage.removeItem('currentUser');
-      setCurrentView('login');
+      setCurrentView('logout');
     } else {
       setCurrentView(path);
     }
-  };
+  }, []);
 
-  const handleDeleteUser = (email) => {
+  // Memoize delete user function
+  const handleDeleteUser = useCallback((email) => {
     const updatedUsers = users.filter((user) => user.email !== email);
     setUsers(updatedUsers);
     setDoctors(updatedUsers.filter((user) => user.usertype === 'doctor'));
     setPatients(updatedUsers.filter((user) => user.usertype === 'patient'));
     localStorage.setItem('users', JSON.stringify(updatedUsers));
-  };
+  }, [users]);
 
   const handleDeleteAppointment = (index) => {
     const updatedAppointments = appointments.filter((_, i) => i !== index);
@@ -48,12 +59,17 @@ const AdminDashboard = () => {
   };
 
   const handleCreateDoctor = () => {
+    // Validate inputs before creating doctor
+    if (!newDoctor.firstname || !newDoctor.lastname || !newDoctor.email || !newDoctor.specialization) {
+      alert('Please fill out all fields');
+      return;
+    }
     const updatedUsers = [...users, newDoctor];
     setUsers(updatedUsers);
     setDoctors(updatedUsers.filter((user) => user.usertype === 'doctor'));
     localStorage.setItem('users', JSON.stringify(updatedUsers));
     setOpenDialog(false);
-    setNewDoctor({ firstname: '', lastname: '', email: '', usertype: 'doctor' });
+    setNewDoctor({ firstname: '', lastname: '', email: '', password: '', extraField: '', usertype: 'doctor' });
   };
 
   const renderDashboard = () => {
@@ -194,10 +210,8 @@ const AdminDashboard = () => {
         return renderAppointmentsTable();
       case 'dashboard':
         return renderDashboard();
-      case 'login':
-        return <p>Redirecting to login...</p>;
-      default:
-        return null;
+      case 'logout':
+        return navigate('/login');
     }
   };
 
@@ -272,32 +286,53 @@ const AdminDashboard = () => {
           <TextField
             label="First Name"
             fullWidth
-            margin="normal"
+            variant="outlined"
             value={newDoctor.firstname}
             onChange={(e) => setNewDoctor({ ...newDoctor, firstname: e.target.value })}
+            style={{ marginBottom: '10px' }}
           />
           <TextField
             label="Last Name"
             fullWidth
-            margin="normal"
+            variant="outlined"
             value={newDoctor.lastname}
             onChange={(e) => setNewDoctor({ ...newDoctor, lastname: e.target.value })}
+            style={{ marginBottom: '10px' }}
           />
           <TextField
             label="Email"
             fullWidth
-            margin="normal"
+            variant="outlined"
             value={newDoctor.email}
             onChange={(e) => setNewDoctor({ ...newDoctor, email: e.target.value })}
+            style={{ marginBottom: '10px' }}
           />
+          <TextField
+            label="Password"
+            fullWidth
+            variant="outlined"
+            type="password"
+            value={newDoctor.password}
+            onChange={(e) => setNewDoctor({ ...newDoctor, password: e.target.value })}
+            style={{ marginBottom: '10px' }}
+          />
+          <TextField
+            label="Specialization"
+            fullWidth
+            select
+            variant="outlined"
+            value={newDoctor.specialization}
+            onChange={(e) => setNewDoctor({ ...newDoctor, extraField: e.target.value })}
+            style={{ marginBottom: '10px' }}
+          >
+            {specializations.map((spec, index) => (
+              <option key={index} value={spec}>{spec}</option>
+            ))}
+          </TextField>
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setOpenDialog(false)} color="secondary">
-            Cancel
-          </Button>
-          <Button onClick={handleCreateDoctor} color="primary">
-            Create
-          </Button>
+          <Button onClick={() => setOpenDialog(false)} color="secondary">Cancel</Button>
+          <Button onClick={handleCreateDoctor} color="primary">Create</Button>
         </DialogActions>
       </Dialog>
     </div>
