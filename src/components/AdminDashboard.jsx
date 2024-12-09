@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { List, ListItem, ListItemText, IconButton, Table, TableHead, TableRow, TableCell, TableBody, TableContainer, Paper, Button } from '@mui/material';
-import { Dashboard, People, Person, Event, ExitToApp, ChevronLeft, ChevronRight } from '@mui/icons-material';
+import { List, ListItem, ListItemText, IconButton, Table, TableHead, TableRow, TableCell, TableBody, TableContainer, Paper, Button, Card, CardContent, Typography } from '@mui/material';
+import { Dashboard, People, Person, Event, ExitToApp, ChevronLeft, ChevronRight, MedicalServices, PersonAdd, CalendarToday } from '@mui/icons-material';
 import bg from '../images/blur-hospital.jpg'; // Import your background image
 
 const AdminDashboard = () => {
@@ -11,7 +10,6 @@ const AdminDashboard = () => {
   const [appointments, setAppointments] = useState([]);
   const [currentView, setCurrentView] = useState('dashboard');
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
-  const navigate = useNavigate();
 
   useEffect(() => {
     const storedUsers = JSON.parse(localStorage.getItem('users')) || [];
@@ -49,16 +47,39 @@ const AdminDashboard = () => {
 
   const renderDashboard = () => {
     const currentUser = JSON.parse(localStorage.getItem('currentUser')) || {};
+
+    const doctorCount = doctors.length;
+    const patientCount = patients.length;
+    const appointmentCount = appointments.length;
+
     return (
       <div>
         <h1>Admin Dashboard</h1>
-        <p>Admin-specific operations and management tools.</p>
+        <div style={{ display: 'flex', justifyContent: 'space-around', marginBottom: '20px' }}>
+          <Card sx={{ width: 200, boxShadow: 3, cursor: 'pointer' }}>
+            <CardContent>
+              <MedicalServices style={{ fontSize: '40px', color: '#2c3e50' }} />
+              <Typography variant="h5" component="div" style={{ fontWeight: 'bold' }}>Doctors</Typography>
+              <Typography variant="body2" color="text.secondary" style={{ fontSize: '3rem', fontWeight:'bold' }}>{doctorCount}</Typography>
+            </CardContent>
+          </Card>
 
-        <h2>Logged In User</h2>
-        <p><strong>First Name:</strong> {currentUser.firstname}</p>
-        <p><strong>Last Name:</strong> {currentUser.lastname}</p>
-        <p><strong>Email:</strong> {currentUser.email}</p>
-        <p><strong>User Type:</strong> {currentUser.usertype}</p>
+          <Card sx={{ width: 200, boxShadow: 3, cursor: 'pointer' }}>
+            <CardContent>
+              <PersonAdd style={{ fontSize: '40px', color: '#2c3e50' }} />
+              <Typography variant="h5" component="div" style={{ fontWeight: 'bold' }}>Patients</Typography>
+              <Typography variant="body2" color="text.secondary" style={{ fontSize: '3rem', fontWeight:'bold' }} >{patientCount}</Typography>
+            </CardContent>
+          </Card>
+
+          <Card sx={{ width: 200, boxShadow: 3, cursor: 'pointer' }}>
+            <CardContent>
+              <CalendarToday style={{ fontSize: '40px', color: '#2c3e50' }} />
+              <Typography variant="h5" component="div" style={{ fontWeight: 'bold' }}>Appointments</Typography>
+              <Typography variant="body2" color="text.secondary" style={{ fontSize: '3rem', fontWeight:'bold' }}>{appointmentCount}</Typography>
+            </CardContent>
+          </Card>
+        </div>
       </div>
     );
   };
