@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { List, ListItem, ListItemText, IconButton } from '@mui/material';
+import { Dashboard, People, Person, Event, ExitToApp, ChevronLeft, ChevronRight } from '@mui/icons-material';
 
 const AdminDashboard = () => {
   const [users, setUsers] = useState([]);
@@ -139,7 +141,7 @@ const AdminDashboard = () => {
       case 'dashboard':
         return renderDashboard();
       case 'login':
-        return navigate('/login')
+        return navigate('/login');
     }
   };
 
@@ -147,41 +149,59 @@ const AdminDashboard = () => {
   const username = currentUser.firstname || 'User';
 
   return (
-    <div style={{ display: 'flex', height: '100vh' }}>
+    <div style={{ display: 'flex', height: '100vh', backgroundImage: 'url(/path-to-your-background-image.jpg)', backgroundSize: 'cover', backgroundPosition: 'center' }}>
+      {/* Sidebar */}
       {isSidebarOpen && (
-        <div style={{ width: '250px', backgroundColor: '#f8f9fa', padding: '20px', borderRight: '1px solid #ddd' }}>
-          <div style={{ fontWeight: 'bold', fontSize: '16px', color: '#222' }}>{`Welcome, ${username}`}</div>
-          <div>
-            <Link to="#" onClick={() => handleMenuClick('dashboard')} style={linkStyle}>Dashboard</Link>
-            <Link to="#" onClick={() => handleMenuClick('doctors')} style={linkStyle}>Doctors List</Link>
-            <Link to="#" onClick={() => handleMenuClick('patients')} style={linkStyle}>Patients List</Link>
-            <Link to="#" onClick={() => handleMenuClick('appointments')} style={linkStyle}>Appointments</Link>
-            <Link to="#" onClick={() => handleMenuClick('logout')} style={linkStyle}>Logout</Link>
-          </div>
+        <div style={{ width: '230px', backgroundColor: '#2c3e50', padding: '20px', borderRight: '1px solid #ddd' }}>
+          <div style={{ fontWeight: 'bold', fontSize: '16px', color: '#fff' }}>{`Welcome, ${username}`}</div>
+          <List>
+            <ListItem button onClick={() => handleMenuClick('dashboard')}>
+              <IconButton edge="start" color="inherit"><Dashboard /></IconButton>
+              <ListItemText primary="Dashboard" />
+            </ListItem>
+            <ListItem button onClick={() => handleMenuClick('doctors')}>
+              <IconButton edge="start" color="inherit"><People /></IconButton>
+              <ListItemText primary="Doctors List" />
+            </ListItem>
+            <ListItem button onClick={() => handleMenuClick('patients')}>
+              <IconButton edge="start" color="inherit"><Person /></IconButton>
+              <ListItemText primary="Patients List" />
+            </ListItem>
+            <ListItem button onClick={() => handleMenuClick('appointments')}>
+              <IconButton edge="start" color="inherit"><Event /></IconButton>
+              <ListItemText primary="Appointments" />
+            </ListItem>
+            <ListItem button onClick={() => handleMenuClick('logout')}>
+              <IconButton edge="start" color="inherit"><ExitToApp /></IconButton>
+              <ListItemText primary="Logout" />
+            </ListItem>
+          </List>
         </div>
       )}
 
-      <button
+      {/* Toggle Sidebar Button */}
+      <IconButton
         onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-        style={{ position: 'absolute', top: '10px', left: isSidebarOpen ? '260px' : '10px', zIndex: 1, padding: '10px' }}
+        style={{
+          position: 'absolute',
+          top: '20px',
+          left: isSidebarOpen ? '250px' : '10px',
+          zIndex: 1,
+          backgroundColor: '#007bff',
+          color: '#fff',
+          borderRadius: '50%',
+          padding: '10px',
+        }}
       >
-        {isSidebarOpen ? 'Hide Sidebar' : 'Show Sidebar'}
-      </button>
+        {isSidebarOpen ? <ChevronLeft /> : <ChevronRight />}
+      </IconButton>
 
-      <div style={{ flex: 1, padding: '20px' }}>{renderContent()}</div>
+      {/* Content Area */}
+      <div style={{ flex: 1, padding: '20px', color: '#fff' }}>
+        {renderContent()}
+      </div>
     </div>
   );
-};
-
-const linkStyle = {
-  display: 'block',
-  padding: '10px',
-  fontSize: '15px',
-  color: '#007bff',
-  textDecoration: 'none',
-  cursor: 'pointer',
-  borderRadius: '4px',
-  transition: 'background-color 0.3s',
 };
 
 export default AdminDashboard;
