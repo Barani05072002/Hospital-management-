@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { List, ListItem, ListItemText, IconButton, Table, TableHead, TableRow, TableCell, TableBody, TableContainer, Paper, Button, Card, CardContent, Typography } from '@mui/material';
+import { List, ListItem, ListItemText, IconButton, Table, TableHead, TableRow, TableCell, TableBody, TableContainer, Paper, Button, Card, CardContent, Typography, Dialog, DialogActions, DialogContent, DialogTitle, TextField } from '@mui/material';
 import { Dashboard, People, Person, Event, ExitToApp, ChevronLeft, ChevronRight, MedicalServices, PersonAdd, CalendarToday } from '@mui/icons-material';
 import bg from '../images/blur-hospital.jpg'; // Import your background image
 
@@ -10,6 +10,8 @@ const AdminDashboard = () => {
   const [appointments, setAppointments] = useState([]);
   const [currentView, setCurrentView] = useState('dashboard');
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const [openDialog, setOpenDialog] = useState(false);
+  const [newDoctor, setNewDoctor] = useState({ firstname: '', lastname: '', email: '', usertype: 'doctor' });
 
   useEffect(() => {
     const storedUsers = JSON.parse(localStorage.getItem('users')) || [];
@@ -45,9 +47,16 @@ const AdminDashboard = () => {
     localStorage.setItem('appointments', JSON.stringify(updatedAppointments));
   };
 
-  const renderDashboard = () => {
-    const currentUser = JSON.parse(localStorage.getItem('currentUser')) || {};
+  const handleCreateDoctor = () => {
+    const updatedUsers = [...users, newDoctor];
+    setUsers(updatedUsers);
+    setDoctors(updatedUsers.filter((user) => user.usertype === 'doctor'));
+    localStorage.setItem('users', JSON.stringify(updatedUsers));
+    setOpenDialog(false);
+    setNewDoctor({ firstname: '', lastname: '', email: '', usertype: 'doctor' });
+  };
 
+  const renderDashboard = () => {
     const doctorCount = doctors.length;
     const patientCount = patients.length;
     const appointmentCount = appointments.length;
@@ -60,7 +69,7 @@ const AdminDashboard = () => {
             <CardContent>
               <MedicalServices style={{ fontSize: '40px', color: '#2c3e50' }} />
               <Typography variant="h5" component="div" style={{ fontWeight: 'bold' }}>Doctors</Typography>
-              <Typography variant="body2" color="text.secondary" style={{ fontSize: '3rem', fontWeight:'bold' }}>{doctorCount}</Typography>
+              <Typography variant="body2" color="text.secondary" style={{ fontSize: '3rem', fontWeight: 'bold' }}>{doctorCount}</Typography>
             </CardContent>
           </Card>
 
@@ -68,7 +77,7 @@ const AdminDashboard = () => {
             <CardContent>
               <PersonAdd style={{ fontSize: '40px', color: '#2c3e50' }} />
               <Typography variant="h5" component="div" style={{ fontWeight: 'bold' }}>Patients</Typography>
-              <Typography variant="body2" color="text.secondary" style={{ fontSize: '3rem', fontWeight:'bold' }} >{patientCount}</Typography>
+              <Typography variant="body2" color="text.secondary" style={{ fontSize: '3rem', fontWeight: 'bold' }}>{patientCount}</Typography>
             </CardContent>
           </Card>
 
@@ -76,7 +85,7 @@ const AdminDashboard = () => {
             <CardContent>
               <CalendarToday style={{ fontSize: '40px', color: '#2c3e50' }} />
               <Typography variant="h5" component="div" style={{ fontWeight: 'bold' }}>Appointments</Typography>
-              <Typography variant="body2" color="text.secondary" style={{ fontSize: '3rem', fontWeight:'bold' }}>{appointmentCount}</Typography>
+              <Typography variant="body2" color="text.secondary" style={{ fontSize: '3rem', fontWeight: 'bold' }}>{appointmentCount}</Typography>
             </CardContent>
           </Card>
         </div>
@@ -87,6 +96,11 @@ const AdminDashboard = () => {
   const renderUserTable = (data, title) => (
     <div style={{ marginBottom: '20px' }}>
       <h2>{title}</h2>
+      {title === 'Doctors List' && (
+        <Button variant="contained" color="primary" onClick={() => setOpenDialog(true)} style={{ marginBottom: '20px' }}>
+          Create Doctor
+        </Button>
+      )}
       {data.length > 0 ? (
         <TableContainer component={Paper} style={{ boxShadow: 'none' }}>
           <Table>
@@ -181,7 +195,9 @@ const AdminDashboard = () => {
       case 'dashboard':
         return renderDashboard();
       case 'login':
-        return navigate('/login');
+        return <p>Redirecting to login...</p>;
+      default:
+        return null;
     }
   };
 
@@ -242,12 +258,48 @@ const AdminDashboard = () => {
         padding: '20px',
         color: '#222',
         width: isSidebarOpen ? '77vw' : '97vw',
-        backgroundImage: `url(${bg})`,  // Correct background image reference
+        backgroundImage: `url(${bg})`,
         backgroundSize: 'cover',
         backgroundPosition: 'center',
       }}>
         {renderContent()}
       </div>
+
+      {/* Create Doctor Dialog */}
+      <Dialog open={openDialog} onClose={() => setOpenDialog(false)}>
+        <DialogTitle>Create Doctor</DialogTitle>
+        <DialogContent>
+          <TextField
+            label="First Name"
+            fullWidth
+            margin="normal"
+            value={newDoctor.firstname}
+            onChange={(e) => setNewDoctor({ ...newDoctor, firstname: e.target.value })}
+          />
+          <TextField
+            label="Last Name"
+            fullWidth
+            margin="normal"
+            value={newDoctor.lastname}
+            onChange={(e) => setNewDoctor({ ...newDoctor, lastname: e.target.value })}
+          />
+          <TextField
+            label="Email"
+            fullWidth
+            margin="normal"
+            value={newDoctor.email}
+            onChange={(e) => setNewDoctor({ ...newDoctor, email: e.target.value })}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setOpenDialog(false)} color="secondary">
+            Cancel
+          </Button>
+          <Button onClick={handleCreateDoctor} color="primary">
+            Create
+          </Button>
+        </DialogActions>
+      </Dialog>
     </div>
   );
 };
