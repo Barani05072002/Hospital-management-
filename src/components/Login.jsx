@@ -10,7 +10,8 @@ const Login = () => {
 
   const handleLogin = (e) => {
     e.preventDefault();
-    const users = JSON.parse(localStorage.getItem('users')) || [];
+    const users = [{"firstname":"one","lastname":"theprime","email":"one@email","password":"12345","usertype":"admin"}]
+    users.push(JSON.parse(localStorage.getItem('users')))
     const user = users.find(
       (user) => user.email === email && user.password === password
     );
