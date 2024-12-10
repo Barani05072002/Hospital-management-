@@ -317,18 +317,24 @@ const AdminDashboard = () => {
             style={{ marginBottom: '10px' }}
           />
           <TextField
-            label="Specialization"
-            fullWidth
-            select
-            variant="outlined"
-            value={newDoctor.specialization}
-            onChange={(e) => setNewDoctor({ ...newDoctor, extraField: e.target.value })}
-            style={{ marginBottom: '10px' }}
-          >
-            {specializations.map((spec, index) => (
-              <option key={index} value={spec}>{spec}</option>
-            ))}
-          </TextField>
+      label="Specialization"
+      fullWidth
+      select
+      variant="outlined"
+      value={newDoctor.specialization}
+      onChange={(e) => setNewDoctor({ ...newDoctor, specialization: e.target.value })}
+      SelectProps={{
+        native: true, // This enables the native HTML `<select>` rendering
+      }}
+      style={{ marginBottom: '10px' }}
+    >
+      <option value="">Select Specialization</option>
+      {specializations.map((spec, index) => (
+        <option key={index} value={spec}>
+          {spec}
+        </option>
+      ))}
+    </TextField>
         </DialogContent>
         <DialogActions>
           <Button onClick={() => setOpenDialog(false)} color="secondary">Cancel</Button>
