@@ -1,5 +1,13 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import {
+  TextField,
+  Button,
+  Typography,
+  Box,
+  Alert,
+} from '@mui/material';
+import bg from '../images/blur-hospital.jpg';
 
 const Signup = () => {
   const [formData, setFormData] = useState({
@@ -7,10 +15,10 @@ const Signup = () => {
     lastname: '',
     email: '',
     password: '',
-    usertype: '',
-    extraField: '',
+    usertype: 'patient',
   });
 
+  const [error, setError] = useState('');
   const navigate = useNavigate();
 
   const handleInputChange = (e) => {
@@ -23,7 +31,7 @@ const Signup = () => {
     const users = JSON.parse(localStorage.getItem('users')) || [];
 
     if (users.find((user) => user.email === formData.email)) {
-      alert('User with this email already exists');
+      setError('User with this email already exists');
       return;
     }
 
@@ -34,80 +42,127 @@ const Signup = () => {
   };
 
   return (
-    <div>
-      <h2>Signup</h2>
+    <div
+    style={{
+      width: '100vw',
+      background : `url(${bg}) center no-repeat`,
+      backgroundSize : 'cover',
+      height : '100vh',
+      display: 'grid',
+      placeItems : 'center'
+    }}
+    >
+    <Box
+      sx={{
+        maxWidth: 400,
+        p: 4,
+        borderRadius: 3,
+        boxShadow: '0 8px 16px rgba(0, 0, 0, 0.2)',
+        backgroundColor: '#ffffff',
+        textAlign: 'center',
+      }}
+    >
+      <Typography
+        variant="h4"
+        gutterBottom
+        sx={{
+          fontWeight: 'bold',
+          color: '#1976d2',
+          mb: 3,
+        }}
+      >
+        Create Your Account
+      </Typography>
+
+      {error && <Alert severity="error" sx={{ mb: 3 }}>{error}</Alert>}
+
       <form onSubmit={handleSignup}>
-        <input
-          type="text"
+        <TextField
+          label="First Name"
           name="firstname"
-          placeholder="First Name"
           value={formData.firstname}
           onChange={handleInputChange}
+          fullWidth
           required
+          margin="normal"
+          sx={{
+            backgroundColor: '#f9f9f9',
+            borderRadius: 2,
+          }}
         />
-        <input
-          type="text"
+        <TextField
+          label="Last Name"
           name="lastname"
-          placeholder="Last Name"
           value={formData.lastname}
           onChange={handleInputChange}
+          fullWidth
           required
+          margin="normal"
+          sx={{
+            backgroundColor: '#f9f9f9',
+            borderRadius: 2,
+          }}
         />
-        <input
-          type="email"
+        <TextField
+          label="Email"
           name="email"
-          placeholder="Email"
+          type="email"
           value={formData.email}
           onChange={handleInputChange}
+          fullWidth
           required
+          margin="normal"
+          sx={{
+            backgroundColor: '#f9f9f9',
+            borderRadius: 2,
+          }}
         />
-        <input
-          type="password"
+        <TextField
+          label="Password"
           name="password"
-          placeholder="Password"
+          type="password"
           value={formData.password}
           onChange={handleInputChange}
+          fullWidth
           required
+          margin="normal"
+          sx={{
+            backgroundColor: '#f9f9f9',
+            borderRadius: 2,
+          }}
         />
-        <select
-          name="usertype"
-          value={formData.usertype}
-          onChange={handleInputChange}
-          required
+        <Button
+          type="submit"
+          variant="contained"
+          color="primary"
+          fullWidth
+          sx={{
+            mt: 3,
+            py: 1.5,
+            backgroundColor: '#1976d2',
+            fontSize: '1rem',
+            fontWeight: 'bold',
+            '&:hover': {
+              backgroundColor: '#1565c0',
+            },
+          }}
         >
-          <option value="">Select User Type</option>
-          <option value="admin">Admin</option>
-          <option value="doctor">Doctor</option>
-          <option value="patient">Patient</option>
-        </select>
-
-        {formData.usertype === 'doctor' && (
-          <input
-            type="text"
-            name="extraField"
-            placeholder="Specialization"
-            value={formData.extraField}
-            onChange={handleInputChange}
-            required
-          />
-        )}
-
-        {formData.usertype === 'patient' && (
-          <input
-            type="text"
-            name="extraField"
-            placeholder="Problem"
-            value={formData.extraField}
-            onChange={handleInputChange}
-            required
-          />
-        )}
-
-        <button type="submit">Signup</button>
+          Signup
+        </Button>
       </form>
+
+      <Typography
+        variant="body2"
+        sx={{
+          mt: 3,
+          color: '#555',
+        }}
+      >
+        Already have an account? <a href="/login" style={{ color: '#1976d2', textDecoration: 'none', fontWeight: 'bold' }}>Login</a>
+      </Typography>
+    </Box>
     </div>
   );
 };
 
 export default Signup;
-

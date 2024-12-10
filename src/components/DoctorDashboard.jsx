@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import bg from '../images/blur-hospital.jpg';
 import {
   Drawer,
   List,
@@ -17,7 +18,8 @@ import {
   AppBar,
   CssBaseline,
   Divider,
-  Paper
+  Paper,
+  Avatar
 } from '@mui/material';
 import {
   Dashboard as DashboardIcon,
@@ -26,6 +28,7 @@ import {
   Logout as LogoutIcon,
   ChevronLeft,
   Person as PersonIcon,
+  AccountCircle as AccountCircleIcon
 } from '@mui/icons-material';
 
 const DoctorDashboard = () => {
@@ -114,9 +117,14 @@ const DoctorDashboard = () => {
       <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: '20px' }}>
         {patients.length > 0 ? (
           patients.map((patient, index) => (
-            <Card key={index} sx={{ width: '300px', boxShadow: 3 }}>
+            <Card key={index} sx={{ width: '300px', boxShadow: 3, marginBottom: 2 }}>
               <CardContent>
-                <Typography variant="h6">{`${patient.firstname} ${patient.lastname}`}</Typography>
+                <Box sx={{ display: 'flex', alignItems: 'center', marginBottom: 2 }}>
+                  <Avatar sx={{ width: 50, height: 50, marginRight: 2 }}>
+                    <PersonIcon />
+                  </Avatar>
+                  <Typography variant="h6">{`${patient.firstname} ${patient.lastname}`}</Typography>
+                </Box>
                 <Typography color="text.secondary">Email: {patient.email}</Typography>
                 <Typography color="text.secondary">Contact: {patient.contact}</Typography>
                 <Typography color="text.secondary">Problem: {patient.problem}</Typography>
@@ -232,6 +240,10 @@ const DoctorDashboard = () => {
           border: '1px solid #e0e0e0',
           display: 'flex',
           flexDirection: 'column',
+          backgroundImage: `url(${bg})`, // Add the URL of your background image here
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          backgroundRepeat: 'no-repeat',
         }}
       >
         <Toolbar />

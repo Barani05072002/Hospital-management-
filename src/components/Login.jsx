@@ -1,6 +1,7 @@
-// Login.js
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
+import { TextField, Button, Container, Typography, Box, Grid } from '@mui/material';
+import bg from '../images/blur-hospital.jpg';
 
 const Login = () => {
   const [email, setEmail] = useState('');
@@ -29,25 +30,67 @@ const Login = () => {
   };
 
   return (
-    <div>
-      <h2>Login</h2>
-      <form onSubmit={handleLogin}>
-        <input
-          type="email"
-          placeholder="Email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-        />
-        <input
-          type="password"
-          placeholder="Password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-        />
-        <button type="submit">Login</button>
-        <Link to="/signup">Sign up</Link>
-      </form>
-    </div>
+    <Box
+      sx={{
+        height: '100vh',
+        width:'100vw',
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        background:`url(${bg}) center no-repeat`,
+        backgroundSize :'cover',
+        bgcolor: '#eceff1', // Light gray background color
+      }}
+    >
+      <Container maxWidth="xs" sx={{ bgcolor: 'white', p: 4, borderRadius: 2, boxShadow: 3 }}>
+        <Typography variant="h5" sx={{ mb: 3, color: '#3f51b5', textAlign: 'center' }}>
+          Login
+        </Typography>
+        <form onSubmit={handleLogin} style={{ width: '100%' }}>
+          <TextField
+            label="Email"
+            type="email"
+            variant="outlined"
+            fullWidth
+            sx={{ mb: 2 }}
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+          />
+          <TextField
+            label="Password"
+            type="password"
+            variant="outlined"
+            fullWidth
+            sx={{ mb: 2 }}
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+          />
+          <Button
+            type="submit"
+            variant="contained"
+            fullWidth
+            sx={{
+              backgroundColor: '#3f51b5',
+              '&:hover': {
+                backgroundColor: '#303f9f',
+              },
+              mb: 2,
+            }}
+          >
+            Login
+          </Button>
+        </form>
+        <Grid container justifyContent="center">
+          <Grid item>
+            <Link to="/signup" style={{ textDecoration: 'none', color: '#3f51b5' }}>
+              <Typography variant="body2" sx={{ textAlign: 'center', color: '#3f51b5' }}>
+                Don't have an account? Sign up
+              </Typography>
+            </Link>
+          </Grid>
+        </Grid>
+      </Container>
+    </Box>
   );
 };
 

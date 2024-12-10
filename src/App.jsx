@@ -9,6 +9,8 @@ import PatientDashboard from './components/PatientDashboard';
 import ProtectedRoute from './components/ProtectedRoute';
 
 const App = () => {
+
+
   return (
     <Router>
       <Routes>
